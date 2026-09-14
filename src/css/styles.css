@@ -16,6 +16,7 @@
 @import url('./badges.css');
 @import url('./back-link.css');
 @import url('./footer.css');
+
 * {
   box-sizing: border-box;
 }
@@ -23,6 +24,7 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
+  background-color: #fff;
 }
 
 ul {
@@ -31,23 +33,41 @@ ul {
   margin: 0;
 }
 
-.search-form {
+.form {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 8px;
-  padding: 30px;
+  padding: 32px 20px;
 }
 
-.search-form input {
+.form input {
   width: 272px;
   height: 40px;
   padding: 8px 16px;
+  border: 1px solid #808080;
+  border-radius: 4px;
+  font-size: 16px;
+  outline: none;
 }
 
-.search-form button,
-.load-more {
+.form input:focus {
+  border-color: #4e75ff;
+}
+
+.form button {
+  height: 40px;
   padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #4e75ff;
+  color: #fff;
+  font-size: 16px;
   cursor: pointer;
+}
+
+.form button:hover {
+  background-color: #6c8cff;
 }
 
 .gallery {
@@ -59,7 +79,13 @@ ul {
 }
 
 .gallery-item {
+  overflow: hidden;
   border: 1px solid #808080;
+  border-radius: 4px;
+}
+
+.gallery-link {
+  display: block;
 }
 
 .gallery-image {
@@ -72,43 +98,85 @@ ul {
 .info {
   display: flex;
   justify-content: space-around;
-  padding: 4px;
+  padding: 8px 4px;
+  background-color: #fff;
 }
 
 .info-item {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 4px;
   margin: 0;
   font-size: 12px;
 }
 
-.load-more {
-  display: none;
-  margin: 32px auto;
+.info-item b {
+  font-weight: 600;
 }
 
-.load-more.is-visible {
+.load-more {
   display: block;
+  margin: 32px auto;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #4e75ff;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.load-more:hover {
+  background-color: #6c8cff;
+}
+
+.load-more[hidden] {
+  display: none;
 }
 
 .loader {
-  display: none;
   width: 48px;
   height: 48px;
   margin: 20px auto;
   border: 5px solid #ccc;
-  border-bottom-color: #4e75ff;
+  border-top-color: #4e75ff;
   border-radius: 50%;
-  animation: rotation 1s linear infinite;
+  animation: spin 1s linear infinite;
 }
 
-.loader.is-visible {
-  display: block;
+.loader[hidden] {
+  display: none;
 }
 
-@keyframes rotation {
-  100% {
+@keyframes spin {
+  to {
     transform: rotate(360deg);
   }
 }
+
+@media screen and (max-width: 768px) {
+  .gallery {
+    padding: 0 16px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .form {
+    flex-direction: column;
+  }
+
+  .form input {
+    width: 100%;
+  }
+
+  .form button {
+    width: 100%;
+  }
+
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+}
+

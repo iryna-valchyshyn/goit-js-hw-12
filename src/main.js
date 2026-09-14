@@ -1,11 +1,7 @@
-
-import './css/styles.css';
-
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
 import { getImagesByQuery } from './js/pixabay-api';
-
 import {
   createGallery,
   clearGallery,
@@ -15,32 +11,28 @@ import {
   hideLoadMoreButton,
 } from './js/render-functions';
 
-const form = document.querySelector('.search-form');
+const form = document.querySelector('.form');
 const loadMoreButton = document.querySelector('.load-more');
 
-let searchQuery = '';
 let page = 1;
-const perPage = 15;
+let currentQuery = '';
 
-form.addEventListener('submit', handleSearch);
-loadMoreButton.addEventListener('click', handleLoadMore);
-
-async function handleSearch(event) {
+form.addEventListener('submit', async event => {
   event.preventDefault();
 
-  searchQuery = event.currentTarget.elements.searchQuery.value
-    .trim()
-    .toLowerCase();
+  const query = event.currentTarget.elements['search-text'].value.trim();
 
-  if (!searchQuery) {
-    iziToast.warning({
-      message: 'Please enter a search query!',
+  if (!query) {
+    iziToast.error({
+      title: 'Error',
+      message: 'Please enter a search query.',
       position: 'topRight',
     });
 
     return;
   }
 
+  currentQuery = query;
   page = 1;
 
   clearGallery();
@@ -48,10 +40,11 @@ async function handleSearch(event) {
   showLoader();
 
   try {
-    const data = await getImagesByQuery(searchQuery, page);
+    const data = await getImagesByQuery(currentQuery, page);
 
     if (data.hits.length === 0) {
-      iziToast.error({
+      iziToast.info({
+        title: 'No results',
         message:
           'Sorry, there are no images matching your search query. Please try again!',
         position: 'topRight',
@@ -62,20 +55,21 @@ async function handleSearch(event) {
 
     createGallery(data.hits);
 
-    const totalPages = Math.ceil(data.totalHits / perPage);
+    page += 1;
 
-    if (page >= totalPages) {
-      hideLoadMoreButton();
-
+    if (data.hits.length < 15 || page > Math.ceil(data.totalHits / 15)) {
       iziToast.info({
         message: "We're sorry, but you've reached the end of search results.",
         position: 'topRight',
       });
+
+      hideLoadMoreButton();
     } else {
       showLoadMoreButton();
     }
-  } catch (error) {
+  } catch {
     iziToast.error({
+      title: 'Error',
       message: 'Something went wrong. Please try again later.',
       position: 'topRight',
     });
@@ -83,54 +77,49 @@ async function handleSearch(event) {
     hideLoader();
     form.reset();
   }
-}
+});
 
-async function handleLoadMore() {
-  page += 1;
-
+loadMoreButton.addEventListener('click', async () => {
   hideLoadMoreButton();
   showLoader();
 
   try {
-    const data = await getImagesByQuery(searchQuery, page);
+    const data = await getImagesByQuery(currentQuery, page);
 
     createGallery(data.hits);
 
-    const totalPages = Math.ceil(data.totalHits / perPage);
+    page += 1;
 
-    if (page >= totalPages) {
-      hideLoadMoreButton();
-
+    if (page > Math.ceil(data.totalHits / 15)) {
       iziToast.info({
         message: "We're sorry, but you've reached the end of search results.",
         position: 'topRight',
       });
+
+      hideLoadMoreButton();
     } else {
       showLoadMoreButton();
     }
 
-    smoothScroll();
-  } catch (error) {
+    const galleryItem = document.querySelector('.gallery-item');
+
+    if (galleryItem) {
+      const cardHeight = galleryItem.getBoundingClientRect().height;
+
+      window.scrollBy({
+        top: cardHeight * 2,
+        behavior: 'smooth',
+      });
+    }
+  } catch {
     iziToast.error({
+      title: 'Error',
       message: 'Something went wrong. Please try again later.',
       position: 'topRight',
     });
+
+    showLoadMoreButton();
   } finally {
     hideLoader();
   }
-}
-
-function smoothScroll() {
-  const galleryItem = document.querySelector('.gallery-item');
-
-  if (!galleryItem) {
-    return;
-  }
-
-  const cardHeight = galleryItem.getBoundingClientRect().height;
-
-  window.scrollBy({
-    top: cardHeight * 2,
-    behavior: 'smooth',
-  });
-}
+});

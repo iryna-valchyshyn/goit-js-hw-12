@@ -22,43 +22,42 @@ export function createGallery(images) {
         comments,
         downloads,
       }) => `
-      <li class="gallery-item">
-        <a class="gallery-link" href="${largeImageURL}">
-          <img
-            class="gallery-image"
-            src="${webformatURL}"
-            alt="${tags}"
-          />
-        </a>
+        <li class="gallery-item">
+          <a class="gallery-link" href="${largeImageURL}">
+            <img
+              class="gallery-image"
+              src="${webformatURL}"
+              alt="${tags}"
+            />
+          </a>
 
-        <div class="info">
-          <p class="info-item">
-            <b>Likes</b>
-            ${likes}
-          </p>
+          <div class="info">
+            <p class="info-item">
+              <b>Likes</b>
+              <span>${likes}</span>
+            </p>
 
-          <p class="info-item">
-            <b>Views</b>
-            ${views}
-          </p>
+            <p class="info-item">
+              <b>Views</b>
+              <span>${views}</span>
+            </p>
 
-          <p class="info-item">
-            <b>Comments</b>
-            ${comments}
-          </p>
+            <p class="info-item">
+              <b>Comments</b>
+              <span>${comments}</span>
+            </p>
 
-          <p class="info-item">
-            <b>Downloads</b>
-            ${downloads}
-          </p>
-        </div>
-      </li>
-    `
+            <p class="info-item">
+              <b>Downloads</b>
+              <span>${downloads}</span>
+            </p>
+          </div>
+        </li>
+      `
     )
     .join('');
 
   gallery.insertAdjacentHTML('beforeend', markup);
-
   lightbox.refresh();
 }
 
@@ -67,17 +66,18 @@ export function clearGallery() {
 }
 
 export function showLoader() {
-  loader.classList.add('is-visible');
+  loader.hidden = false;
 }
 
 export function hideLoader() {
-  loader.classList.remove('is-visible');
+  loader.hidden = true;
 }
 
 export function showLoadMoreButton() {
-  loadMoreButton.classList.add('is-visible');
+  loadMoreButton.hidden = false;
 }
 
 export function hideLoadMoreButton() {
-  loadMoreButton.classList.remove('is-visible');
+  loadMoreButton.hidden = true;
 }
+
